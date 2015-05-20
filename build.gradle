@@ -27,5 +27,6 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "com.google.guava:guava:18.0"
     compile "org.apache.commons:commons-lang3:3.4"
+    compile "io.reactivex:rxjava:1.0.10"
 }
 
