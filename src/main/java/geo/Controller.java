@@ -1,7 +1,6 @@
 package geo;
 
 import geo.service.KeyStore;
-import geo.service.Logger;
 import geo.service.Repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ public class Controller {
 	private KeyStore keyStore;
 	@Autowired
 	private Repository repository;
-	@Autowired
-	private Logger logger;
 
 	@RequestMapping("/base/{query}")
 	public String get(@PathVariable String query) {
@@ -38,8 +35,6 @@ public class Controller {
 		} catch (Exception e) {
 			return "";
 		}
-
-		logger.write(key + " - " + result);
 
 		return result;
 	}
