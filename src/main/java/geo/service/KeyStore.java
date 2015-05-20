@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.concurrent.Future;
 
@@ -21,6 +22,11 @@ public class KeyStore {
 
 	@Async
 	public Future<String> getKeyLater(String query) {
+		return new AsyncResult<>(getKey(query));
+	}
+
+	@Async
+	public ListenableFuture<String> getKeyLater2(String query) {
 		return new AsyncResult<>(getKey(query));
 	}
 }

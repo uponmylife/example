@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -36,6 +37,11 @@ public class Repository {
 
 	@Async
 	public Future<String> findLater(String key) {
+		return new AsyncResult<>(find(key));
+	}
+
+	@Async
+	public ListenableFuture<String> findLater2(String key) {
 		return new AsyncResult<>(find(key));
 	}
 }

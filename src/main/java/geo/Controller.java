@@ -4,6 +4,8 @@ import geo.service.KeyStore;
 import geo.service.Repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,6 +74,36 @@ public class Controller {
 			}
 		});
 
+		log.info("servlet end.");
+		return deferredResult;
+	}
+
+	@RequestMapping("/callback/{query}")
+	public DeferredResult<String> getByCallback(@PathVariable String query) {
+		DeferredResult deferredResult = new DeferredResult();
+		keyStore.getKeyLater2(query).addCallback(new ListenableFutureCallback<String>() {
+			@Override
+			public void onFailure(Throwable ex) {
+				deferredResult.setResult("matching key not found.");
+			}
+
+			@Override
+			public void onSuccess(String key) {
+				repository.findLater2(key).addCallback(new ListenableFutureCallback<String>() {
+					@Override
+					public void onFailure(Throwable ex) {
+						deferredResult.setResult("");
+					}
+
+					@Override
+					public void onSuccess(String result) {
+						deferredResult.setResult(result);
+					}
+				});
+			}
+		});
+
+		log.info("servlet end.");
 		return deferredResult;
 	}
 }
