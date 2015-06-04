@@ -18,8 +18,8 @@
 
     <int-kafka:consumer-context id="consumerContext" consumer-timeout="4000" zookeeper-connect="zookeeperConnect">
         <int-kafka:consumer-configurations>
-            <int-kafka:consumer-configuration group-id="default" max-messages="5000" value-decoder="stringDecoder">
-                <int-kafka:topic id="test-topic1" streams="4"/>
+            <int-kafka:consumer-configuration group-id="default" max-messages="5000" key-decoder="stringDecoder" value-decoder="stringDecoder">
+                <int-kafka:topic id="test-topic2" streams="4"/>
             </int-kafka:consumer-configuration>
         </int-kafka:consumer-configurations>
     </int-kafka:consumer-context>

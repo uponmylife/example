@@ -22,8 +22,9 @@
 
     <int-kafka:producer-context id="kafkaProducerContext">
         <int-kafka:producer-configurations>
-            <int-kafka:producer-configuration broker-list="localhost:9092" topic="test-topic1" compression-codec="default"
-                                              value-encoder="stringEncoder" value-class-type="java.lang.String" />
+            <int-kafka:producer-configuration broker-list="localhost:9092" topic="test-topic2" compression-codec="default"
+                                              value-encoder="stringEncoder" value-class-type="java.lang.String"
+                                              partitioner="customPartitioner" />
         </int-kafka:producer-configurations>
     </int-kafka:producer-context>
 

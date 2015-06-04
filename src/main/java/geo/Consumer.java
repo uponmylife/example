@@ -7,10 +7,14 @@ import java.util.Map;
 
 @Component
 public class Consumer {
-	public void receive(Map<String, Map<String, List>> map) {
-		map.keySet().forEach(topic -> {
-			Map<String, List> map2 = map.get(topic);
-			map2.keySet().forEach(key2 -> System.out.println("topic=" + topic + ", key2=" + key2 + ", list=" + map2.get(key2)));
+	public void receive(Map<String, Map<String, List>> topicMap) {
+		topicMap.keySet().forEach(topic -> {
+			System.out.println("topic=" + topic);
+			Map<String, List> partitionMap = topicMap.get(topic);
+			partitionMap.keySet().forEach(partition -> {
+				List list = partitionMap.get(partition);
+				System.out.println("partition=" + partition + ", list=" + list);
+			});
 		});
 	}
 }
