@@ -2,9 +2,56 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Twitter</title>
 </head>
-<body>
-Hello~
+<body id="twitter">
+    <input id="new-twit" type="text" placeholder="무슨 일이 일어나고 있나요?">
+    <button onclick="postTwit()">Post</button>
+    <ul id="twit-list"></ul>
 </body>
 </html>
+
+<script src="lib/jquery-2.1.4.min.js"></script>
+<script src="lib/underscore-min.js"></script>
+
+<script type="text/template" id="item-template">
+    <li>
+        <%-text%> <br> <%-date%> <br> <button onclick="deleteTwit('<%-_links.self.href%>')">delete</button>
+    </li>
+</script>
+
+<script type="text/javascript">
+$(function() {
+    updateTwitList();
+});
+
+function updateTwitList() {
+    $.get("/twit", function(result) {
+        $("#twit-list").empty();
+        result._embedded.twits.forEach(function(twit) {
+            var html = _.template($('#item-template').html())(twit);
+            $("#twit-list").append(html);
+        });
+    });
+}
+
+function postTwit() {
+    $.ajax({
+        url: "/twit",
+        type: "POST",
+        data: JSON.stringify({text: $("#new-twit").val()}),
+        contentType: "application/json; charset=utf-8",
+        success: function() {
+            updateTwitList();
+            $("#new-twit").val("");
+        }
+    });
+}
+function deleteTwit(restUrl) {
+    $.ajax({
+        url: restUrl,
+        type: "DELETE",
+        success: function() { updateTwitList(); }
+    });
+}
+</script>
