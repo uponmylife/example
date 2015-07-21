@@ -1,5 +1,6 @@
 package geo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -9,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 
 @Repository
+@Slf4j
 public class UserRepository {
 	private Map<String, UserDetail> map = new HashMap<>();
 
@@ -20,16 +22,20 @@ public class UserRepository {
 	}
 
 	public Set<String> getUserIds() {
-		randomSleep(500);
+		randomSleep(300, 500);
 		return map.keySet();
 	}
 
 	public UserDetail getUserDetail(String id) {
-		randomSleep(100);
+		randomSleep(20, 100);
 		return map.get(id);
 	}
 
-	private void randomSleep(long scope) {
-		try { Thread.sleep(Math.abs(new Random().nextLong()) % scope); } catch (InterruptedException e) {}
+	private void randomSleep(long min, long max) {
+		try {
+			long time = min + Math.abs(new Random().nextLong()) % (max - min);
+			Thread.sleep(time);
+			log.info(time + "ms sleep");
+		} catch (InterruptedException e) {}
 	}
 }

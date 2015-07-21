@@ -1,14 +1,10 @@
 package geo;
 
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 import com.google.common.collect.Maps;
-import kamon.Kamon;
 import kamon.metric.Entity;
 import kamon.metric.EntitySnapshot;
 import kamon.metric.SubscriptionsDispatcher;
-import kamon.metric.instrument.Counter;
 import kamon.metric.instrument.Histogram;
 import lombok.extern.slf4j.Slf4j;
 import scala.collection.JavaConversions;
@@ -32,6 +28,12 @@ public class SimpleSubscriber extends UntypedActor {
 				log.info("Histogram [{}]: records={} max={} min={} sum={} percentile={}", e.name(), h.numberOfMeasurements(),
 						h.max(), h.min(), h.sum(), h.percentile(50));
 			});
+
+			filterCategory("trace", snapshot).forEach((e, s) -> {
+				Histogram.Snapshot h = s.histogram("elapsed-time").get();
+				log.info("Histogram [{}]: records={} max={} min={} sum={} percentile={}", e.name(), h.numberOfMeasurements(),
+						nano2Milli(h.max()), nano2Milli(h.min()), nano2Milli(h.sum()), nano2Milli(h.percentile(50)));
+			});
 		} else unhandled(message);
 	}
 
@@ -39,25 +41,7 @@ public class SimpleSubscriber extends UntypedActor {
 		return Maps.filterKeys(JavaConversions.mapAsJavaMap(snapshot.metrics()), (e) -> e.category().equals(categoryName));
 	}
 
-	public static void main(String[] args) throws Exception {
-		Kamon.start();
-		log.info("kamon started");
-
-		Histogram someHistogram = Kamon.metrics().histogram("histogram1");
-		Counter someCounter = Kamon.metrics().counter("counter1");
-		someHistogram.record(9);
-		someHistogram.record(1);
-		someHistogram.record(1);
-		someHistogram.record(2);
-		someHistogram.record(4);
-		someCounter.increment();
-		someCounter.increment();
-		someCounter.increment(5);
-
-		Kamon.metrics().subscribe("**", "**", ActorSystem.create("system1").actorOf(Props.create(SimpleSubscriber.class), "actor1"));
-
-		Thread.sleep(20_000);
-		Kamon.shutdown();
-		System.exit(0);
+	private long nano2Milli(long nano) {
+		return nano / 1_000_000;
 	}
 }
