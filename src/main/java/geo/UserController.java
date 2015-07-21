@@ -1,7 +1,7 @@
 package geo;
 
-import kamon.Kamon;
-import kamon.trace.TraceContext;
+import kamon.trace.Tracer;
+import kamon.util.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,13 +17,13 @@ public class UserController {
 
 	@RequestMapping("/users")
 	public List<UserDetail> getUsers() {
-		TraceContext traceContext = Kamon.tracer().newContext("trace1");
-		Set<String> userIds = repository.getUserIds();
-		List<UserDetail> userDetails = userIds.stream().map((id) -> {
-			UserDetail userDetail = repository.getUserDetail(id);
-			return userDetail;
-		}).collect(Collectors.toList());
-		traceContext.finish();
-		return userDetails;
+		return Tracer.withNewContext("trace2", true, (Supplier<List<UserDetail>>) () -> {
+			Set<String> userIds = repository.getUserIds();
+			List<UserDetail> userDetails = userIds.stream().map((id) -> {
+				UserDetail userDetail = repository.getUserDetail(id);
+				return userDetail;
+			}).collect(Collectors.toList());
+			return userDetails;
+		});
 	}
 }
