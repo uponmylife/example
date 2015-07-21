@@ -17,9 +17,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 		Kamon.start();
 		log.info("kamon started");
-		ActorRef subscriber = ActorSystem.create("system1").actorOf(Props.create(SimpleSubscriber.class), "actor1");
-		Kamon.tracer().subscribe(subscriber);
-		Kamon.metrics().subscribe("**", "**", subscriber);
+		Kamon.metrics().subscribe("**", "**", ActorSystem.create("system1").actorOf(Props.create(SimpleSubscriber.class), "actor1"));
 
 		Histogram histogram1 = Kamon.metrics().histogram("histogram1");
 		Counter counter1 = Kamon.metrics().counter("counter1");
