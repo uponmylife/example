@@ -34,6 +34,12 @@ public class SimpleSubscriber extends UntypedActor {
 				log.info("Histogram [{}]: records={} max={} min={} sum={} percentile={}", e.name(), h.numberOfMeasurements(),
 						nano2Milli(h.max()), nano2Milli(h.min()), nano2Milli(h.sum()), nano2Milli(h.percentile(50)));
 			});
+
+			filterCategory("trace-segment", snapshot).forEach((e, s) -> {
+				Histogram.Snapshot h = s.histogram("elapsed-time").get();
+				log.info("Histogram [{}]: records={} max={} min={} sum={} percentile={}", e.name(), h.numberOfMeasurements(),
+						nano2Milli(h.max()), nano2Milli(h.min()), nano2Milli(h.sum()), nano2Milli(h.percentile(50)));
+			});
 		} else unhandled(message);
 	}
 

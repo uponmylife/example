@@ -18,11 +18,14 @@ public class UserController {
 	@RequestMapping("/users")
 	public List<UserDetail> getUsers() {
 		return Tracer.withNewContext("trace2", true, (Supplier<List<UserDetail>>) () -> {
-			Set<String> userIds = repository.getUserIds();
+			Supplier<Set<String>> getUserIds = () -> repository.getUserIds();
+			Set<String> userIds = Tracer.currentContext().withNewSegment("getUserIds", "database", "jdbc", getUserIds);
+
 			List<UserDetail> userDetails = userIds.stream().map((id) -> {
-				UserDetail userDetail = repository.getUserDetail(id);
-				return userDetail;
+				Supplier<UserDetail> getDetail = () -> repository.getUserDetail(id);
+				return Tracer.currentContext().withNewSegment("getDetail", "database", "jdbc", getDetail);
 			}).collect(Collectors.toList());
+
 			return userDetails;
 		});
 	}
