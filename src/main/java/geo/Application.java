@@ -1,6 +1,5 @@
 package geo;
 
-import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import kamon.Kamon;
@@ -14,10 +13,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 public class Application {
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
 		Kamon.start();
 		log.info("kamon started");
 		Kamon.metrics().subscribe("**", "**", ActorSystem.create("system1").actorOf(Props.create(SimpleSubscriber.class), "actor1"));
+
+		SpringApplication.run(Application.class, args);
 
 		Histogram histogram1 = Kamon.metrics().histogram("histogram1");
 		Counter counter1 = Kamon.metrics().counter("counter1");

@@ -1,5 +1,7 @@
 package geo;
 
+import kamon.annotation.EnableKamon;
+import kamon.annotation.Segment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+@EnableKamon
 @Repository
 @Slf4j
 public class UserRepository {
@@ -21,11 +24,13 @@ public class UserRepository {
 		map.put("pai", new UserDetail("pai", "so", "F"));
 	}
 
+	@Segment(name = "getUserIds", category = "database", library = "jdbc")
 	public Set<String> getUserIds() {
 		randomSleep(300, 500);
 		return map.keySet();
 	}
 
+	@Segment(name = "getUserDetail", category = "database", library = "jdbc")
 	public UserDetail getUserDetail(String id) {
 		randomSleep(20, 100);
 		return map.get(id);
