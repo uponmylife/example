@@ -27,5 +27,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "com.google.guava:guava:18.0"
     compile "org.apache.commons:commons-lang3:3.4"
+    compile "org.quartz-scheduler:quartz:2.2.2"
+    compile "org.quartz-scheduler:quartz-jobs:2.2.2"
 }
 
